@@ -1,4 +1,4 @@
-const CACHE_NAME = 'wine-cellar-v4';
+const CACHE_NAME = 'wine-cellar-v5';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -28,7 +28,7 @@ self.addEventListener('activate', (e) => {
   self.clients.claim();
 });
 
-// Stratégie Network-First : Cherche toujours la dernière version en ligne en premier
+// Stratégie Network-First
 self.addEventListener('fetch', (e) => {
   e.respondWith(
     fetch(e.request)
