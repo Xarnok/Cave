@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ma Cave à Vin</title>
+  
+  <!-- Manifeste PWA & Meta iOS -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#121215">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Cave à Vin">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+
+  <!-- Style CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="header">
+    <div class="logo">
+      <svg class="wine-icon" viewBox="0 0 512 512" fill="none" stroke="currentColor">
+        <path d="M241 340 h30 v90 h-30 z" fill="#d4af37"/>
+        <path d="M190 430 h132 v20 h-132 z" rx="10" fill="#d4af37"/>
+        <path d="M176 130 h160 c0 90 -40 130 -80 180 c-40 -50 -80 -90 -80 -180 z" fill="none" stroke="#d4af37" stroke-width="20" stroke-linejoin="round"/>
+        <path d="M190 200 c20 50 46 80 66 100 c20 -20 46 -50 66 -100 c-22 30 -44 45 -66 45 c-22 0 -44 -15 -66 -45 z" fill="#800020"/>
+      </svg>
+      <h1>Ma Cave à Vin</h1>
+    </div>
+
+    <!-- Sélecteur de cave -->
+    <div class="cellar-selector-wrapper">
+      <select id="cellar-select" class="cellar-select" aria-label="Sélectionner une cave"></select>
+      <button id="btn-new-cellar" class="btn btn-outline btn-sm" title="Créer une nouvelle cave">+</button>
+    </div>
+
+    <div class="header-actions">
+      <button id="btn-export" class="btn btn-outline" title="Exporter en JSON">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+      </button>
+      <label class="btn btn-outline" title="Importer un fichier JSON">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        <input type="file" id="input-import" accept=".json" style="display: none;">
+      </label>
+      <button id="btn-config" class="btn btn-secondary">Modifier dimensions</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Barre de statistiques détaillée -->
+    <section class="stats-bar">
+      <div class="stat-card">
+        <span class="stat-val" id="stat-total">0</span>
+        <span class="stat-lbl">Total / Capacité</span>
+      </div>
+      <div class="stat-card type-rouge">
+        <span class="stat-val" id="stat-rouge">0</span>
+        <span class="stat-lbl">Rouges</span>
+      </div>
+      <div class="stat-card type-blanc">
+        <span class="stat-val" id="stat-blanc">0</span>
+        <span class="stat-lbl">Blancs</span>
+      </div>
+      <div class="stat-card type-rose">
+        <span class="stat-val" id="stat-rose">0</span>
+        <span class="stat-lbl">Rosés</span>
+      </div>
+      <div class="stat-card type-petillant">
+        <span class="stat-val" id="stat-petillant">0</span>
+        <span class="stat-lbl">Pétillants</span>
+      </div>
+      <div class="search-wrapper">
+        <input type="text" id="search-input" placeholder="Rechercher nom, domaine, année, donateur...">
+      </div>
+    </section>
+
+    <!-- Visualisation de la grille -->
+    <section class="grid-section">
+      <div class="cellar-grid" id="cellar-grid"></div>
+    </section>
+  </main>
+
+  <!-- MODAL : Gestion / Création d'une cave -->
+  <div class="modal" id="modal-cellar-config">
+    <div class="modal-content">
+      <h2 id="cellar-modal-title">Créer ou modifier une cave</h2>
+      <p class="modal-subtitle">Configurez le nom et les dimensions de votre casier ou armoire.</p>
+      
+      <form id="form-cellar-config">
+        <div class="form-group">
+          <label for="cellar-name-input">Nom de la cave <span class="required">*</span></label>
+          <input type="text" id="cellar-name-input" placeholder="ex: Armoire Salon, Cave Principale" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="rows-input">Lignes (Rangées)</label>
+            <input type="number" id="rows-input" min="1" max="30" value="4" required>
+          </div>
+          <div class="form-group">
+            <label for="cols-input">Colonnes</label>
+            <input type="number" id="cols-input" min="1" max="30" value="6" required>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-danger" id="btn-delete-cellar" style="display: none;">Supprimer cette cave</button>
+          <button type="button" class="btn btn-outline" id="btn-close-cellar-config">Annuler</button>
+          <button type="submit" class="btn btn-primary">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL : Ajout / Modification de bouteille -->
+  <div class="modal" id="modal-bottle">
+    <div class="modal-content">
+      <h2 id="modal-bottle-title">Gérer la bouteille</h2>
+      <form id="form-bottle">
+        <input type="hidden" id="bottle-row">
+        <input type="hidden" id="bottle-col">
+
+        <div class="form-group">
+          <label for="bottle-name">Nom du vin <span class="required">*</span></label>
+          <input type="text" id="bottle-name" placeholder="ex: Château Margaux" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="bottle-type">Type de vin</label>
+            <select id="bottle-type">
+              <option value="rouge">Rouge</option>
+              <option value="blanc">Blanc</option>
+              <option value="rose">Rosé</option>
+              <option value="petillant">Pétillant / Champagne</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="bottle-year">Année / Millésime</label>
+            <input type="number" id="bottle-year" placeholder="ex: 2018" min="1900" max="2100">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="bottle-domain">Domaine / Appellation</label>
+          <input type="text" id="bottle-domain" placeholder="ex: Bordeaux, AOC Margaux">
+        </div>
+
+        <div class="form-group">
+          <label for="bottle-giver">Offerte par</label>
+          <input type="text" id="bottle-giver" placeholder="ex: Oncle Pierre">
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-danger" id="btn-delete-bottle" style="display: none;">Retirer / Bouteille bue</button>
+          <button type="button" class="btn btn-outline" id="btn-close-bottle">Annuler</button>
+          <button type="submit" class="btn btn-primary">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(err => console.warn('PWA SW erreur :', err));
+      });
+    }
+  </script>
+</body>
+</html>
