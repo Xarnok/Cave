@@ -1,4 +1,4 @@
-const CACHE_NAME = 'wine-cellar-v2';
+const CACHE_NAME = 'wine-cellar-v4';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -28,10 +28,18 @@ self.addEventListener('activate', (e) => {
   self.clients.claim();
 });
 
+// Stratégie Network-First : Cherche toujours la dernière version en ligne en premier
 self.addEventListener('fetch', (e) => {
   e.respondWith(
-    caches.match(e.request).then((cachedResponse) => {
-      return cachedResponse || fetch(e.request);
-    })
+    fetch(e.request)
+      .then((networkResponse) => {
+        return caches.open(CACHE_NAME).then((cache) => {
+          cache.put(e.request, networkResponse.clone());
+          return networkResponse;
+        });
+      })
+      .catch(() => {
+        return caches.match(e.request);
+      })
   );
 });
