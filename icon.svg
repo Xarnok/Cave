@@ -2,11 +2,11 @@
   <!-- Fond sombre élégant -->
   <rect width="512" height="512" rx="100" fill="#0a0a0d" />
   
-  <!-- Liquide rouge rempli (avec la courbe ovale du haut du liquide) -->
-  <path d="M165,160 C165,160 210,210 256,210 C302,210 347,160 347,160 C347,270 305,335 256,360 C207,335 165,270 165,160 Z" fill="#9b111e" />
+  <!-- Liquide rouge rempli épousant l'ovale supérieur et la forme du verre -->
+  <path d="M165,160 C165,270 207,335 256,360 C305,335 347,270 347,160 C347,173 305,184 256,184 C207,184 165,173 165,160 Z" fill="#9b111e" />
   
-  <!-- Ouverture ovale supérieure du verre (fine et transparente pour voir la surface du vin) -->
-  <ellipse cx="256" cy="160" rx="91" ry="24" fill="none" stroke="#d4af37" stroke-width="8" />
+  <!-- Surface ovale supérieure du vin (donne l'effet 3D de remplissage) -->
+  <ellipse cx="256" cy="160" rx="91" ry="24" fill="#800020" stroke="#d4af37" stroke-width="8" />
   
   <!-- Corps du verre (traits fins) -->
   <path d="M165,160 C165,270 207,335 256,360 C305,335 347,270 347,160" fill="none" stroke="#d4af37" stroke-width="8" stroke-linecap="round" />
