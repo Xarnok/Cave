@@ -1,4 +1,4 @@
-const STORAGE_KEY = 'wine_cellar_app_data_v5';
+const STORAGE_KEY = 'wine_cellar_app_data_v6';
 
 // Structure de données globale
 let appData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
@@ -92,7 +92,6 @@ function renderGrid() {
   const cols = cellar.cols || 6;
   const rows = cellar.rows || 4;
 
-  // Configuration dynamique des colonnes
   cellarGrid.style.gridTemplateColumns = `repeat(${cols}, 90px)`;
   cellarGrid.innerHTML = '';
 
@@ -104,16 +103,17 @@ function renderGrid() {
       const bottle = cellar.bottles[key];
       const slotEl = document.createElement('div');
       
-      slotEl.className = 'slot' + (bottle ? ` occupied ${bottle.type || 'rouge'}` : '');
+      slotEl.className = 'slot' + (bottle && bottle.name ? ` occupied ${bottle.type || 'rouge'}` : '');
       slotEl.dataset.key = key;
 
       if (bottle && bottle.name) {
-        slotEl.innerHTML = `
-          <span class="slot-name">${escapeHtml(bottle.name)}</span>
-          ${bottle.year ? `<span class="slot-year">\${escapeHtml(String(bottle.year))}</span>` : ''}
-        `;
+        let yearHtml = '';
+        if (bottle.year) {
+          yearHtml = '<span class="slot-year">' + escapeHtml(String(bottle.year)) + '</span>';
+        }
+        slotEl.innerHTML = '<span class="slot-name">' + escapeHtml(bottle.name) + '</span>' + yearHtml;
       } else {
-        slotEl.innerHTML = `<span class="slot-plus">+</span>`;
+        slotEl.innerHTML = '<span class="slot-plus">+</span>';
       }
 
       slotEl.addEventListener('click', () => openBottleModal(r, c));
