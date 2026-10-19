@@ -1,12 +1,12 @@
-const STORAGE_KEY = 'wine_cellar_app_data_v3';
+const STORAGE_KEY = 'wine_cellar_app_data_v5';
 
-// Données globales : Liste de caves et ID de la cave active
+// Structure de données globale
 let appData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
   cellars: [],
   activeCellarId: null
 };
 
-// Éléments DOM
+// DOM Elements
 const cellarSelect = document.getElementById('cellar-select');
 const cellarGrid = document.getElementById('cellar-grid');
 const searchInput = document.getElementById('search-input');
@@ -25,7 +25,7 @@ const modalBottle = document.getElementById('modal-bottle');
 document.addEventListener('DOMContentLoaded', () => {
   setupEventListeners();
 
-  if (appData.cellars.length === 0) {
+  if (!appData.cellars || appData.cellars.length === 0) {
     openCellarConfigModal(true);
   } else {
     if (!appData.activeCellarId || !appData.cellars.find(c => c.id === appData.activeCellarId)) {
@@ -92,7 +92,7 @@ function renderGrid() {
   const cols = cellar.cols || 6;
   const rows = cellar.rows || 4;
 
-  // Fixation explicite des colonnes en CSS Grid pour éviter l'effet 1 seule colonne
+  // Configuration dynamique des colonnes
   cellarGrid.style.gridTemplateColumns = `repeat(${cols}, 90px)`;
   cellarGrid.innerHTML = '';
 
@@ -248,7 +248,7 @@ function saveBottle(e) {
 
 function deleteBottle() {
   const cellar = getCurrentCellar();
-  const r = document.getElementById('bottle-row'].value;
+  const r = document.getElementById('bottle-row').value;
   const c = document.getElementById('bottle-col').value;
   const key = `${r}_${c}`;
 
@@ -289,7 +289,7 @@ function handleSearch(e) {
 }
 
 function exportData() {
-  const blob = new Blob([JSON.stringify(appData, null, 2)], { type: 'application/json'}},
+  const blob = new Blob([JSON.stringify(appData, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
@@ -314,7 +314,7 @@ function importData(e) {
         saveAndRefresh();
         alert('Caves restaurées avec succès !');
       } else {
-        alert('Format de fichier de sauvegarde invalide.');
+        alert('Format de fichier invalide.');
       }
     } catch (err) {
       alert('Erreur lors de la lecture du fichier JSON.');
