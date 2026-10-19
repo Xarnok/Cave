@@ -8,7 +8,7 @@
   --text-main: #f0f0f5;
   --text-muted: #8e8e9e;
   
-  /* Couleurs distinctes par type de vin */
+  /* Couleurs par type de vin */
   --c-rouge: #9b111e;
   --c-blanc: #f3d179;
   --c-rose: #ff85a1;
@@ -34,7 +34,7 @@ body {
   flex-direction: column;
 }
 
-/* Header Sticky corrigé avec padding suffisant pour éviter le masquage au survol */
+/* Header */
 .header {
   display: flex;
   justify-content: space-between;
@@ -95,7 +95,7 @@ body {
   align-items: center;
 }
 
-/* Layout Main avec espace supérieur accru pour éviter le masquage */
+/* Container principal */
 .container {
   max-width: 1280px;
   width: 100%;
@@ -159,7 +159,7 @@ body {
   border-color: var(--accent-gold);
 }
 
-/* Grille Cave - Ajout de marge haute pour isoler du sticky header */
+/* Section Grille */
 .grid-section {
   overflow-x: auto;
   padding-top: 1rem;
@@ -204,7 +204,7 @@ body {
   color: var(--text-muted);
 }
 
-/* Cellules occupées avec distinction nette par type */
+/* Cellules occupées */
 .slot.occupied {
   border-style: solid;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
@@ -290,7 +290,6 @@ body {
   margin-bottom: 1.25rem;
 }
 
-/* Forms */
 .form-group {
   margin-bottom: 1rem;
   display: flex;
