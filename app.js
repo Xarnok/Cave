@@ -1,4 +1,4 @@
-const STORAGE_KEY = 'wine_cellar_app_data_v2';
+const STORAGE_KEY = 'wine_cellar_app_data_v3';
 
 // Données globales : Liste de caves et ID de la cave active
 let appData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
@@ -25,7 +25,6 @@ const modalBottle = document.getElementById('modal-bottle');
 document.addEventListener('DOMContentLoaded', () => {
   setupEventListeners();
 
-  // Si aucune cave n'existe, on force l'ouverture de la modale de création
   if (appData.cellars.length === 0) {
     openCellarConfigModal(true);
   } else {
@@ -90,24 +89,28 @@ function renderGrid() {
   const cellar = getCurrentCellar();
   if (!cellar) return;
 
-  cellarGrid.style.gridTemplateColumns = `repeat(\${cellar.cols}, 1fr)`;
+  const cols = cellar.cols || 6;
+  const rows = cellar.rows || 4;
+
+  // Fixation explicite des colonnes en CSS Grid pour éviter l'effet 1 seule colonne
+  cellarGrid.style.gridTemplateColumns = `repeat(${cols}, 90px)`;
   cellarGrid.innerHTML = '';
 
   if (!cellar.bottles) cellar.bottles = {};
 
-  for (let r = 0; r < cellar.rows; r++) {
-    for (let c = 0; c < cellar.cols; c++) {
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
       const key = `${r}_${c}`;
       const bottle = cellar.bottles[key];
       const slotEl = document.createElement('div');
       
-      slotEl.className = 'slot' + (bottle ? ` occupied \${bottle.type || 'rouge'}` : '');
+      slotEl.className = 'slot' + (bottle ? ` occupied ${bottle.type || 'rouge'}` : '');
       slotEl.dataset.key = key;
 
       if (bottle && bottle.name) {
-        // Utiliser les backticks ` ` pour que ${bottle.year} soit correctement interprété
         slotEl.innerHTML = `
-          <span class="slot-name">${escapeHtml(bottle.name)}</span>${bottle.year ? `<span class="slot-year">${escapeHtml(String(bottle.year))}</span>` : ''}
+          <span class="slot-name">${escapeHtml(bottle.name)}</span>
+          ${bottle.year ? `<span class="slot-year">\${escapeHtml(String(bottle.year))}</span>` : ''}
         `;
       } else {
         slotEl.innerHTML = `<span class="slot-plus">+</span>`;
@@ -123,7 +126,7 @@ function updateStats() {
   const cellar = getCurrentCellar();
   if (!cellar) return;
 
-  const totalSlots = cellar.rows * cellar.cols;
+  const totalSlots = (cellar.rows || 4) * (cellar.cols || 6);
   const bottles = cellar.bottles || {};
   
   let countRouge = 0, countBlanc = 0, countRose = 0, countPetillant = 0;
@@ -245,7 +248,7 @@ function saveBottle(e) {
 
 function deleteBottle() {
   const cellar = getCurrentCellar();
-  const r = document.getElementById('bottle-row').value;
+  const r = document.getElementById('bottle-row'].value;
   const c = document.getElementById('bottle-col').value;
   const key = `${r}_${c}`;
 
@@ -286,7 +289,7 @@ function handleSearch(e) {
 }
 
 function exportData() {
-  const blob = new Blob([JSON.stringify(appData, null, 2)], { type: 'application/json' });
+  const blob = new Blob([JSON.stringify(appData, null, 2)], { type: 'application/json'}},
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
