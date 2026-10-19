@@ -90,7 +90,7 @@ function renderGrid() {
   const cellar = getCurrentCellar();
   if (!cellar) return;
 
-  cellarGrid.style.gridTemplateColumns = `repeat(${cellar.cols}, 1fr)`;
+  cellarGrid.style.gridTemplateColumns = `repeat(\${cellar.cols}, 1fr)`;
   cellarGrid.innerHTML = '';
 
   if (!cellar.bottles) cellar.bottles = {};
@@ -101,13 +101,13 @@ function renderGrid() {
       const bottle = cellar.bottles[key];
       const slotEl = document.createElement('div');
       
-      slotEl.className = 'slot' + (bottle ? ` occupied ${bottle.type || 'rouge'}` : '');
+      slotEl.className = 'slot' + (bottle ? ` occupied \${bottle.type || 'rouge'}` : '');
       slotEl.dataset.key = key;
 
-      if (bottle) {
+      if (bottle && bottle.name) {
+        // Utiliser les backticks ` ` pour que ${bottle.year} soit correctement interprété
         slotEl.innerHTML = `
-          <span class="slot-name">${escapeHtml(bottle.name)}</span>
-          ${bottle.year ? `<span class="slot-year">\${bottle.year}</span>` : ''}
+          <span class="slot-name">${escapeHtml(bottle.name)}</span>${bottle.year ? `<span class="slot-year">${escapeHtml(String(bottle.year))}</span>` : ''}
         `;
       } else {
         slotEl.innerHTML = `<span class="slot-plus">+</span>`;
