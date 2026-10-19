@@ -171,6 +171,7 @@ body {
   gap: 12px;
   margin: 0 auto;
   width: fit-content;
+  justify-content: center;
 }
 
 .slot {
